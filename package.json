@@ -1,0 +1,19 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.4.3",
+    "mongoosh": "^0.0.7",
+    "nanoid": "^5.0.7",
+    "nodemon": "^3.1.4",
+    "shortid": "^2.2.16"
+  }
+}
