@@ -1,8 +1,11 @@
 const express = require('express');
 const { connectToMongoDb } = require('./connect');
+const path = require('path');
 const urlRoute = require('./routes/url');
 
+const staticRoute = require('./routes/staticRouter');
 const URL = require('./models/url');
+
 const app = express();
 const port = 3001;
 
@@ -12,9 +15,21 @@ connectToMongoDb('mongodb://localhost:27017/url-shortener')
         console.log('Connected to MongoDB')
     );
 
+app.set('view engine', 'ejs');
+app.set('views', path.resolve('./views'));
 app.use(express.json());
+//to process form data
+app.use(express.urlencoded({ extended: false }));
+
+// app.get('/test', async (req, res) => {
+//     const allUrls = await URL.find({});
+//     return res.render('home', {
+//         urls: allUrls,
+//     });
+// });
 app.use('/url', urlRoute);
-app.get('/:shortId', async (req, res) => {
+app.use('/', staticRoute);
+app.get('/url/:shortId', async (req, res) => {
     const shortId = req.params.shortId;
     const entry = await URL.findOneAndUpdate({
         shortId,
@@ -22,7 +37,7 @@ app.get('/:shortId', async (req, res) => {
         $push: {
             visitHistory: {
                 timestamp: Date.now(),
-               // ipAddress: req.ip,
+                // ipAddress: req.ip,
             },
         },
     });

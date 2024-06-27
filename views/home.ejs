@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+
+<body>
+    <h1>URL Shortener</h1>
+    <% if (locals.id) { %>
+        <p>Url Generated: <a href="http://localhost:3001/url/<%= id %>" target="_blank">http://localhost:3001/url/<%= id
+                    %></a></p>
+        <% } %>
+            <div>
+                <form method="post" action="/url">
+                    <label>Enter Your Original URL:</label>
+                    <input type="text" name="url" placeholder="https://example.com" />
+                    <br>
+                    <button type="submit">Generate</button>
+                </form>
+            </div>
+            <div>
+                <% if (locals.urls) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th>Short ID</th>
+                                <th>Redirect</th>
+                                <th>Clicks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% urls.forEach((url, index)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td>
+                                        <%= url.shortId %>
+                                    </td>
+                                    <td><a href="<%= url.redirectUrl %>" target="_blank">
+                                            <%= url.redirectUrl %>
+                                        </a></td>
+                                    <td>
+                                        <%= url.visitHistory.length %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <% } %>
+            </div>
+</body>
+
+</html>
