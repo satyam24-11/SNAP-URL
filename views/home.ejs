@@ -87,18 +87,19 @@
 
 <body>
     <h1>URL Shortener</h1>
+    <div>
+        <form method="post" action="/url">
+            <label>Enter Your Original URL:</label>
+            <input type="text" name="url" placeholder="https://example.com" />
+            <br>
+            <button type="submit">Generate</button>
+        </form>
+    </div>
     <% if (locals.id) { %>
         <p>Url Generated: <a href="http://localhost:3001/url/<%= id %>" target="_blank">http://localhost:3001/url/<%= id
-                    %></a></p>
+                    %>
+            </a></p>
         <% } %>
-            <div>
-                <form method="post" action="/url">
-                    <label>Enter Your Original URL:</label>
-                    <input type="text" name="url" placeholder="https://example.com" />
-                    <br>
-                    <button type="submit">Generate</button>
-                </form>
-            </div>
             <div>
                 <% if (locals.urls) { %>
                     <table>
@@ -116,9 +117,10 @@
                                     <td>
                                         <%= index + 1 %>
                                     </td>
-                                    <td>
-                                        <%= url.shortId %>
-                                    </td>
+                                    <td><a href="http://localhost:3001/url/<%= url.shortId %>">http://localhost:3001/url/
+                                            <%= url.shortId %>
+                                        </a></td>
+
                                     <td><a href="<%= url.redirectUrl %>" target="_blank">
                                             <%= url.redirectUrl %>
                                         </a></td>
