@@ -1,9 +1,13 @@
 const express = require('express');
 const { connectToMongoDb } = require('./connect');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+
+const { restrictToLoggedinUserOnly,checkAuth } = require('./middlewares/auth');
+const URL = require('./models/url');
 const urlRoute = require('./routes/url');
 const staticRoute = require('./routes/staticRouter');
-const URL = require('./models/url');
+const userRoute = require('./routes/user');
 
 const app = express();
 const port = 3001;
@@ -18,8 +22,11 @@ const port = 3001;
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
 
-        app.use('/url', urlRoute);
-        app.use('/', staticRoute);
+        app.use(cookieParser());
+
+        app.use('/url', restrictToLoggedinUserOnly, urlRoute);
+        app.use('/user', userRoute);
+        app.use('/', checkAuth,staticRoute);
 
         app.get('/url/:shortId', async (req, res) => {
             try {
