@@ -3,7 +3,7 @@ const { connectToMongoDb } = require('./connect');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
-const { restrictToLoggedinUserOnly,checkAuth } = require('./middlewares/auth');
+const { checkForAuthentication, restrictTo } = require('./middlewares/auth');
 const URL = require('./models/url');
 const urlRoute = require('./routes/url');
 const staticRoute = require('./routes/staticRouter');
@@ -23,10 +23,11 @@ const port = 3001;
         app.use(express.urlencoded({ extended: false }));
 
         app.use(cookieParser());
+        app.use(checkForAuthentication);
 
-        app.use('/url', restrictToLoggedinUserOnly, urlRoute);
+        app.use('/url', restrictTo(["NORMAL", "ADMIN"]), urlRoute);
         app.use('/user', userRoute);
-        app.use('/', checkAuth,staticRoute);
+        app.use('/', staticRoute);
 
         app.get('/url/:shortId', async (req, res) => {
             try {
