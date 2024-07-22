@@ -1,7 +1,9 @@
+
 const express = require('express');
 const { connectToMongoDb } = require('./connect');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+require('dotenv').config(); // Ensure this is at the top to load env variables
 
 const { checkForAuthentication, restrictTo } = require('./middlewares/auth');
 const URL = require('./models/url');
@@ -10,12 +12,12 @@ const staticRoute = require('./routes/staticRouter');
 const userRoute = require('./routes/user');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3000;
 
 (async () => {
     try {
-        await connectToMongoDb('mongodb://localhost:27017/url-shortener');
-        console.log('Connected to MongoDB');
+        const mongoUri = process.env.MONGODB_CONNECT_URI;
+        await connectToMongoDb(mongoUri); 
 
         app.set('view engine', 'ejs');
         app.set('views', path.resolve('./views'));
@@ -32,6 +34,7 @@ const port = 3001;
         app.get('/url/:shortId', async (req, res) => {
             try {
                 const shortId = req.params.shortId;
+                console.log('shortId:', shortId);
                 const entry = await URL.findOneAndUpdate({
                     shortId,
                 }, {
