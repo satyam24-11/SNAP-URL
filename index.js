@@ -1,9 +1,9 @@
-
 const express = require('express');
 const { connectToMongoDb } = require('./connect');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-require('dotenv').config(); // Ensure this is at the top to load env variables
+const session = require('express-session');
+require('dotenv').config();
 
 const { checkForAuthentication, restrictTo } = require('./middlewares/auth');
 const URL = require('./models/url');
@@ -17,19 +17,38 @@ const port = process.env.PORT || 3000;
 (async () => {
     try {
         const mongoUri = process.env.MONGODB_CONNECT_URI;
-        await connectToMongoDb(mongoUri); 
+        await connectToMongoDb(mongoUri);
 
         app.set('view engine', 'ejs');
         app.set('views', path.resolve('./views'));
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
-
         app.use(cookieParser());
+        app.use(session({
+            secret: process.env.SECRET, // Use environment variable for secret
+            resave: false,
+            saveUninitialized: true,
+            name: 'terminated' // Set your custom session cookie name here
+        }));
+
         app.use(checkForAuthentication);
+
+        // Serve static files from the views directory
+        app.use('/styles', express.static(path.join(__dirname, 'views')));
 
         app.use('/url', restrictTo(["NORMAL", "ADMIN"]), urlRoute);
         app.use('/user', userRoute);
         app.use('/', staticRoute);
+
+        app.post('/logout', (req, res) => {
+            req.session.destroy(err => {
+                if (err) {
+                    return res.redirect('/login');
+                }
+                res.clearCookie('terminated');
+                res.redirect('/login');
+            });
+        });
 
         app.get('/url/:shortId', async (req, res) => {
             try {
@@ -41,7 +60,7 @@ const port = process.env.PORT || 3000;
                     $push: {
                         visitHistory: {
                             timestamp: Date.now(),
-                            // ipAddress: req.ip,
+                            ipAddress: req.ip,
                         },
                     },
                 }, { new: true }); // Ensure the updated document is returned

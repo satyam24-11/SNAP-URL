@@ -16,7 +16,6 @@ router.get('/admin/urls', restrictTo(['ADMIN']), async (req, res) => {
     }
 });
 
-// Route to get URLs created by the logged-in user
 router.get('/', restrictTo(['NORMAL', 'ADMIN']), async (req, res) => {
     try {
         if (!req.user) {

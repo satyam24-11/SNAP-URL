@@ -3,75 +3,94 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            width: 100%;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            color: #555;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/styles/login.css"> <!-- Reference the CSS file -->
 </head>
 
 <body>
-    <form action="/user" method="post">
-        <h1>Sign Up</h1>
-        <label>Full Name</label>
-        <input type="text" name="name" required />
-        <label>Email</label>
-        <input type="text" name="email" required />
-        <label>Password</label>
-        <input type="text" name="password" required />
-        <button type="submit">Signup</button>
-    </form>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form id="signup-form">
+                <h1>Create Account</h1>
+                <input type="text" name="name" placeholder="Name" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit">Sign Up</button>
+                <div id="signup-error" style="color: red; display: none;"></div>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form id="signin-form" action="/user/login" method="post">
+                <h1>Sign in</h1>
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        const signupError = document.getElementById('signup-error');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+
+        // Handle the sign-up form submission
+        const signupForm = document.getElementById('signup-form');
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const formData = new FormData(signupForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value));
+
+            try {
+                const response = await fetch('/user/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    alert('Signup successful! Please login.');
+                    signupForm.reset();
+                    container.classList.remove("right-panel-active"); // Switch to login view
+                } else {
+                    const result = await response.json();
+                    signupError.textContent = result.message;
+                    signupError.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                signupError.textContent = 'Signup failed. Please try again.';
+                signupError.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 
 </html>
