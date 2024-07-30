@@ -2,7 +2,7 @@ Live Link: https://url-shortener-wp68.onrender.com
 
 Some pictures :
 
-![image](https://github.com/user-attachments/assets/7bafab7a-c0fc-40e7-b09d-4560d279068f)
+![image](https://github.com/user-attachments/assets/6da6c7a4-7397-4bdb-a0f0-efe661847787)
 
 ![image](https://github.com/satyam24-11/URL-Shortener/assets/103444868/b8736a53-fccd-4ccc-b3dd-efb6993cefec)
 
